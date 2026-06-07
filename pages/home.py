@@ -10,17 +10,29 @@ import streamlit as st
 
 st.set_page_config(page_title="Just SAT", layout="wide")
 
+#____Filters____
+st.sidebar.header("Filters")
+st.sidebar.slider("Month", 1, 2, 3, key="month")
+st.sidebar.selectbox("Course", ["All", "English", "Math", "English & Math"], key="course")
+
+#___Filter configurations____
+month_filter = st.session_state.get('month', 1) #Get the month selected by the user 
+course_filter = st.session_state.get("course", "All") #Get the course selected by the user
+
 
 #____Uploading student data____
-student_data = data_processor.load_file("students.csv")
+student_data = data_processor.load_file("month" + str(month_filter) + ".csv") 
 student_data = data_processor.average_grade(student_data)
+student_data = data_processor.process_grade_column(student_data)
 student_data = data_processor.progress(student_data)
 student_data = data_processor.status(student_data)
 
+#____Apply the course filter____
+if course_filter != "All":
+    student_data = student_data[student_data["Course"] == course_filter]
 
 #____Title and description____
-st.image("logo.png", width=78) # Adjust width to your preference
-st.title("Just SAT - prepare for SAT the *right* way!")
+st.title(":four_leaf_clover:Just SAT - prepare for SAT the *right* way!")
 st.caption("Leading online SAT school in Uzbekistan.")
 st.divider()
 
@@ -42,12 +54,12 @@ with row:
         delta=student_grade, 
         delta_arrow ="off",
         chart_data=grades,
-        chart_type = "bar",
+        chart_type = "line",
         border=True
     )
     #Average grade across all courses
     at_risk_count, at_risk_grades = data_processor.risk_students(student_data) #number of students at risk
-    on_track_percent = str(((len(student_data) - at_risk_count) / len(student_data))*100) + "%"
+    on_track_percent = str(round((((len(student_data) - at_risk_count) / len(student_data))*100),2)) + "%"
     st.metric(
         label="Average Grade of students", 
         value=data_processor.total_grade(student_data), 
@@ -58,7 +70,7 @@ with row:
         chart_type="area", border=True
     )
     #Number of students at risk
-    at_risk_percent = str((at_risk_count / len(student_data))*100) + "%"
+    at_risk_percent = str(round((at_risk_count / len(student_data))*100, 2)) + "%"
     st.metric(
         label="Students at Risk", 
         value=at_risk_count, 
@@ -67,7 +79,7 @@ with row:
         delta_color = "inverse", 
         delta_arrow="off",
         chart_data= at_risk_grades,
-        chart_type = "bar",
+        chart_type = "line",
         border=True, height=214
     )
 
@@ -85,6 +97,10 @@ st.dataframe(student_data, column_config={
         "Course" : st.column_config.TextColumn(
            "Course",
            help="The course student is enrolled in",
+        ),
+        "Grade" : st.column_config.LineChartColumn(
+            "Grades",
+            help="Student's grades for unit tests"
         ),
         "AverageGrade" : st.column_config.NumberColumn(
            "Average Grade",

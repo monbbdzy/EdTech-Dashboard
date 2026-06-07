@@ -36,7 +36,7 @@ def process_grade_column(studentData):
 #Calculating the Status of the student
 def status(studentData):
     studentData["Status"] = np.where( #At risk = if student has 3 or more skipped deadlines OR if student's grade is less than 7
-    (studentData["Missed_deadlines"] >= 3) | (studentData["AverageGrade"] < 7), "🔴 At Risk", "🟢 On track")
+    (studentData["Missed_deadlines"] >= 5) | (studentData["AverageGrade"] < 7), "🔴 At Risk", "🟢 On track")
     sorted_data = studentData.sort_values(by="Status", ascending=False) #Sorting students based on the risk 
     return sorted_data
 
@@ -49,7 +49,7 @@ def progress(studentData):
     #Calculating the progress of students based on their course
     studentData["Progress"] = np.where(
         is_english_and_math, 
-        ((studentData["Progress"].astype(int) / 8)*100).round(1), ((studentData["Progress"].astype(int) / 4)*100).round(1)
+        ((studentData["Progress"].astype(int) / 22)*100).round(1), ((studentData["Progress"].astype(int) / 11)*100).round(1)
     )
     return studentData
 
@@ -58,7 +58,7 @@ def top_student(studentData):
     # Filter students by average grade, skipped deadlines and progress to choose the top performing student
     student= studentData.sort_values(by=["AverageGrade", "Missed_deadlines", 
     "Progress"],ascending=[False, True, False]).iloc[0] # Pick the first one
-    grades = [float(g.strip()) for g in student["Grade"].split(',')] #All the grades of the top student
+    grades = student["Grade"] #All the grades of the top student
     name = student["Name"] 
     avg_grade = student["AverageGrade"]
 

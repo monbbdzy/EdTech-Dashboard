@@ -4,9 +4,11 @@ import streamlit as st
 
 st.set_page_config(page_title="Just SAT", layout="wide")
 
+#___Filter configurations____
+month_filter = st.session_state.get('month', 1) #Get the month selected by the user 
 
 #____Uploading student data____
-student_data = data_processor.load_file("students.csv")
+student_data = data_processor.load_file("month" + str(month_filter) + ".csv")
 student_data = data_processor.average_grade(student_data)
 student_data = data_processor.process_grade_column(student_data)
 student_data = data_processor.progress(student_data)
