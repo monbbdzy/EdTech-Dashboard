@@ -1,4 +1,4 @@
-#Name : app.py
+#Name : app.py 
 #Author: Nigina Rashidova
 #Description: Script for displaying the data
 #Date started: 05/06/2026
@@ -6,6 +6,7 @@
 #__Imports__ 
 import data_processor
 import streamlit as st
+# from streamlit_echarts import st_echarts
 
 st.set_page_config(page_title="Just SAT", layout="wide")
 
@@ -23,11 +24,12 @@ st.title("Just SAT - prepare for SAT the *right* way!")
 st.caption("Leading online SAT school in Uzbekistan.")
 st.divider()
 
+
 #____Home page____
 st.header("Student Dashboard")
 st.caption("Monitor and review student progress across different courses.")
 
-# Key performance indicators
+#____Key performance indicators____
 row = st.container(horizontal=True) #Create a row container
 with row:
     #Top student
@@ -69,13 +71,13 @@ with row:
         border=True, height=214
     )
 
-#Overview of student data
+#____Overview of student data____
 st.header("Overview of students")
 st.caption("Filtered by the status of the student.")
 
 # Adding more information about each column
 st.dataframe(student_data, column_config={
-        "Grade": None,       # Hiding the column -> average grade is only displayed
+        "Grade": None,       # Hiding rades -> average grade is only displayed
         "Name" : st.column_config.TextColumn(
            "Name",
            help="Student's full name",
@@ -106,5 +108,36 @@ st.dataframe(student_data, column_config={
     },
     hide_index=True)
 
+# #____Pie chart for course popularity analysis____
+# options = {
+#     "tooltip": {"trigger": "item"},
+#     "legend": {"top": "5%", "left": "center"},
+#     "series": [
+#         {
+#             "name": "Access From",
+#             "type": "pie",
+#             "radius": ["40%", "70%"],
+#             "avoidLabelOverlap": False,
+#             "itemStyle": {
+#                 "borderRadius": 10,
+#                 "borderColor": "#fff",
+#                 "borderWidth": 2,
+#             },
+#             "label": {"show": False, "position": "center"},
+#             "emphasis": {
+#                 "label": {"show": True, "fontSize": 40, "fontWeight": "bold"}
+#             },
+#             "labelLine": {"show": False},
+#             "data": [
+#                 {"value": 1048, "name": "Search Engine"},
+#                 {"value": 735, "name": "Direct"},
+#                 {"value": 580, "name": "Email"},
+#                 {"value": 484, "name": "Union Ads"},
+#                 {"value": 300, "name": "Video Ads"},
+#             ],
+#         }
+#     ],
+# }
+# st_echarts(options=options, height="500px")
 
     
