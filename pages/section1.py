@@ -1,3 +1,8 @@
+#Name : section1.py 
+#Author: Nigina Rashidova
+#Description: Student Profile page
+#Date started: 07/06/2026
+
 #__Imports__ 
 import data_processor
 import streamlit as st
@@ -25,26 +30,25 @@ st.title("👩‍🎓Student Details")
 st.caption("View and monitor student's progress and performance.")
 st.divider()
 
-st.header("Search for the student's profile")
-
 #____Search for the needed student____
+st.header("Search for the student's profile")
 search_input = st.text_input("Search the student you need:", placeholder="🔎 Full name of student")
 
 #____Student Profile Details____
-if search_input:
-    filtered_data = student_data[student_data['Name'].str.contains(search_input, case=False)]
-    filtered_data_month1 = month1[month1['Name'].str.contains(search_input, case=False)]
+if search_input: #if there is input in the search bar
+    filtered_data = student_data[student_data['Name'].str.contains(search_input, case=False)] #find student data
+    filtered_data_month1 = month1[month1['Name'].str.contains(search_input, case=False)]#find student data from month1
     
     if not filtered_data.empty:   
-        # Get the student row only
+        # get the student row only
         student = filtered_data.iloc[0]
         student_month1 = filtered_data_month1.iloc[0]
         
-        # Display student profile
+        # display student profile
         st.title(student["Name"]) 
         col1, col2 = st.columns([0.7, 0.3]) #create two columns 
         with col1: #Key info of student
-            st.markdown(f"**📑 Course:** {student['Course']}")
+            st.markdown(f"**📑 Course:** {student['Course']}") #use markdown for prettier design
             st.markdown(f"**📊 Grades for unit tests:** {", ".join(map(str, student['Grade']))}")
             st.markdown(f"**❕ Status:** {student['Status']}")
             st.markdown(f"**⏰ Skipped Deadlines:** {student['Missed_deadlines']}")
@@ -54,7 +58,7 @@ if search_input:
             
             st.metric(
                 label="Student's Grade:", 
-                value=student["AverageGrade"]/10, 
+                value=student["AverageGrade"]/10,  #format=percent was affecting this value, thats why i divided it by 10
                 delta_description=" Progress from first month",
                 delta=growth, 
                 format="percent",
@@ -66,7 +70,7 @@ if search_input:
         with col1:#Display student's progress = grades
             st.header("Student's progress over months")
             st.divider()
-            fig = px.line(y=student["Grade"],
+            fig = px.line(y=student["Grade"], #use line graph for grades
                           labels={"y": "Grades",  "x": "Unit number" })
             st.plotly_chart(fig)  # display in app
             

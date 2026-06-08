@@ -1,6 +1,6 @@
-#Name : app.py 
+#Name : home.py 
 #Author: Nigina Rashidova
-#Description: Script for displaying the data
+#Description: Home page display script (main page)
 #Date started: 05/06/2026
 
 #__Imports__ 
@@ -12,23 +12,25 @@ st.set_page_config(page_title="Just SAT", layout="wide")
 
 #____Filters____
 st.sidebar.header("Filters")
-st.sidebar.slider("Month", 1, 2, 3, key="month")
-st.sidebar.selectbox("Course", ["All", "English", "Math", "English & Math"], key="course")
+st.sidebar.slider("Month", 1, 2, 3, key="month") #months filter
+st.sidebar.selectbox("Course", ["All", "English", "Math", "English & Math"], key="course") #courses filter
 
 #___Filter configurations____
-month_filter = st.session_state.get('month', 1) #Get the month selected by the user 
-course_filter = st.session_state.get("course", "All") #Get the course selected by the user
+month_filter = st.session_state.get('month', 1) #get the month selected by the user 
+course_filter = st.session_state.get("course", "All") #get the course selected by the user
 
 
 #____Uploading student data____
-student_data = data_processor.load_file("month" + str(month_filter) + ".csv") 
+student_data = data_processor.load_file("month" + str(month_filter) + ".csv") #upload the file based on user input
+#process all the data
 student_data = data_processor.average_grade(student_data)
 student_data = data_processor.process_grade_column(student_data)
 student_data = data_processor.progress(student_data)
 student_data = data_processor.status(student_data)
 no_filter_data=student_data #save the unfiltered data for donut chart
+
 #____Apply the course filter____
-if course_filter != "All":
+if course_filter != "All": 
     student_data = student_data[student_data["Course"] == course_filter]
 
 #____Title and description____
@@ -42,23 +44,25 @@ st.header("Student Dashboard")
 st.caption("Monitor and review student progress across different courses.")
 
 #____Key performance indicators____
-row = st.container(horizontal=True) #Create a row container
+row = st.container(horizontal=True) #create a row container
 with row:
-    #Top student
-    #Get the name, average grade and all grades of top student
+    #Top student indicator
+    #get the name, average grade and all grades of top student
     student_name, student_grade, grades = data_processor.top_student(student_data)
     st.metric(
         label="Top Student", 
         value=student_name, 
         delta_description=" average grade",
         delta=student_grade, 
-        delta_arrow ="off",
-        chart_data=grades,
+        delta_arrow ="off", #we are not showing any growth, just the grade
+        chart_data=grades, #line graph of all the grades student got
         chart_type = "line",
         border=True
     )
-    #Average grade across all courses
+    
+    #Average grade across all courses indicator
     at_risk_count, at_risk_grades = data_processor.risk_students(student_data) #number of students at risk
+    #percent of students on track
     on_track_percent = str(round((((len(student_data) - at_risk_count) / len(student_data))*100),2)) + "%"
     st.metric(
         label="Average Grade of students", 
@@ -70,7 +74,8 @@ with row:
         chart_type="area", border=True
     )
     #Number of students at risk
-    at_risk_percent = str(round((at_risk_count / len(student_data))*100, 2)) + "%"
+    #percent of students at risk 
+    at_risk_percent = str(round((at_risk_count / len(student_data))*100, 2)) + "%" 
     st.metric(
         label="Students at Risk", 
         value=at_risk_count, 
@@ -87,18 +92,17 @@ with row:
 st.header("Overview of students")
 st.caption("Filtered by the status of the student.")
 
-# Adding more information about each column
+# Adding more information about each column in the dataframe
 st.dataframe(student_data, column_config={
-        "Grade": None,       # Hiding rades -> average grade is only displayed
         "Name" : st.column_config.TextColumn(
            "Name",
-           help="Student's full name",
+           help="Student's full name", #tooltip
         ),
         "Course" : st.column_config.TextColumn(
            "Course",
            help="The course student is enrolled in",
         ),
-        "Grade" : st.column_config.LineChartColumn(
+        "Grade" : st.column_config.LineChartColumn( #showcase grades as line chart
             "Grades",
             help="Student's grades for unit tests"
         ),
@@ -110,7 +114,7 @@ st.dataframe(student_data, column_config={
            "Missed Deadlines",
            help="The number of deadlines student missed",
         ),
-        "Progress": st.column_config.ProgressColumn(
+        "Progress": st.column_config.ProgressColumn( #showcase the progress as progress bar
             "Progress",
             help="The student's course completion percentage",
             format="%f%%",

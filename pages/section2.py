@@ -1,7 +1,13 @@
+#Name : section2.py 
+#Author: Nigina Rashidova
+#Description: About us page
+#Date started: 08/06/2026
+
 #__Imports__ 
 import streamlit as st
 import data_processor
 
+#Get the number of students studying currently
 student_data = data_processor.load_file("month3.csv")
 llen = len(student_data)
 
@@ -10,7 +16,7 @@ st.set_page_config(page_title="Just SAT", layout="wide")
 # __Using CSS for designing the about page____
 st.markdown("""
 <style>
-    .hero-title {
+    .hero-title { 
         font-size: 3rem;
         font-weight: 800;
         letter-spacing: -1px;
@@ -104,29 +110,31 @@ st.markdown("""
 
 #____Title and description____
 st.image("logo.png", width=64)
-
 st.markdown('<div class="hero-title">Just SAT 📑</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-subtitle">The biggest online SAT school — built around <em>you</em>.</div>', unsafe_allow_html=True)
 
-#Button for the link
+#__Button for telegram link___
 st.markdown(
     '<a class="tg-button" href="https://t.me/jast_sat" target="_blank">:material/send: Join our Telegram channel</a>',
     unsafe_allow_html=True
 )
-
 st.divider()
 
-# ____Stats KPI____
+# ____Stats key performance indicators____
 st.markdown('<div class="section-tag">By the numbers</div>', unsafe_allow_html=True)
 
 c1, c2, c3, c4 = st.columns(4)
 with c1:
+    #number of active students
     st.markdown(f"""<div class="stat-card"><div class="stat-number">{llen}</div><div class="stat-label">Active students</div></div>""", unsafe_allow_html=True)
 with c2:
+    #SAT score of the teacher
     st.markdown("""<div class="stat-card"><div class="stat-number">1530</div><div class="stat-label">Teacher's SAT score</div></div>""", unsafe_allow_html=True)
 with c3:
+    #teaching experience of teacher
     st.markdown("""<div class="stat-card"><div class="stat-number">2 yrs</div><div class="stat-label">Teaching experience</div></div>""", unsafe_allow_html=True)
 with c4:
+    #how students improved their score
     st.markdown("""<div class="stat-card"><div class="stat-number">95%</div><div class="stat-label">Students improved score</div></div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -136,6 +144,7 @@ st.markdown('<div class="section-tag">Our approach</div>', unsafe_allow_html=Tru
 st.markdown("### Every student gets a personalized path")
 st.markdown("We don't believe in one-size-fits-all SAT prep. Each student learns differently, moves at their own pace, and has unique strengths and gaps. That's why everything at Just SAT is built around the individual.")
 
+#three containers with more information about approach of the center
 f1, f2, f3 = st.columns(3)
 with f1:
     st.markdown("""
@@ -166,6 +175,7 @@ st.markdown('<div class="section-tag">Meet your teacher</div>', unsafe_allow_htm
 
 col_teacher, col_gap, col_quote = st.columns([0.45, 0.05, 0.5])
 
+#More info about teacher in a seperate container
 with col_teacher:
     st.markdown("""
     <div class="teacher-card">
@@ -178,6 +188,7 @@ with col_teacher:
     </div>
     """, unsafe_allow_html=True)
 
+#Words of the teacher in a seperate container
 with col_quote:
     st.markdown("#### My teaching philosophy")
     st.markdown("""
@@ -193,6 +204,7 @@ st.divider()
 col_cta, _ = st.columns([0.6, 0.4])
 with col_cta:
     st.markdown("### Ready to start your SAT journey?")
+    #another telegram channel link button
     st.markdown("Join our Telegram channel for free resources, updates, and to get in touch with Nigina directly.")
     st.markdown(
         '<a class="tg-button" href="https://t.me/jast_sat" target="_blank">✈️ Join us on Telegram</a>',
