@@ -121,7 +121,7 @@ st.markdown('<div class="section-tag">By the numbers</div>', unsafe_allow_html=T
 
 c1, c2, c3, c4 = st.columns(4)
 with c1:
-    st.markdown("""<div class="stat-card"><div class="stat-number">120+</div><div class="stat-label">Active students</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="stat-card"><div class="stat-number">{llen}</div><div class="stat-label">Active students</div></div>""", unsafe_allow_html=True)
 with c2:
     st.markdown("""<div class="stat-card"><div class="stat-number">1530</div><div class="stat-label">Teacher's SAT score</div></div>""", unsafe_allow_html=True)
 with c3:
