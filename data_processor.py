@@ -5,6 +5,12 @@
 
 import pandas as pd
 import numpy as np
+from fpdf import FPDF
+import matplotlib
+matplotlib.use('Agg')  # prevents GUI conflicts with Streamlit
+import matplotlib.pyplot as plt
+import io
+
 
 #Loading the CSV file
 def load_file(file):
@@ -90,4 +96,66 @@ def risk_students(studentData):
     grades = studentData[studentData["Status"] =="🔴 At Risk"]["AverageGrade"]
     
     return count, grades
+
+#__Generating pdf file of the student__
+
+#Line chart image creation
+def generate_line_chart_image(grades):
+    fig, ax = plt.subplots()
+    ax.plot(grades, marker="o", color="#1f77b4")
+    ax.set_title("Grades Over Time")
+    ax.set_ylabel("Grade")
+    ax.set_xlabel("Unit Number")
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png")
+    plt.close()
+    buf.seek(0)
+    return buf
+
+#Donut chart image creation
+def generate_donut_chart_image(progress):
+    fig, ax = plt.subplots()
+    ax.pie(
+        [progress, 100 - progress],
+        labels=[str(progress) + "% Course Completed", str(100 - progress) + "%Course Not Completed"],
+        colors=["#1f77b4", "#d3d3d3"],
+        wedgeprops=dict(width=0.5)
+    )
+    ax.set_title=("Student's course completion")
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png")
+    plt.close()
+    buf.seek(0)
+    return buf
+
+#Generate the pdf
+def generate_pdf(month3_student, month1_student):
+    pdf = FPDF()
+    pdf.add_page()
+    
+    #fonts
+    pdf.add_font("DejaVu", "", "DejaVuSans.ttf")
+    pdf.add_font("DejaVu", "B", "DejaVuSans-Bold.ttf")
+    pdf.set_font("DejaVu", "B", 24)
+    pdf.cell(0, 10, month3_student["Name"], ln=True)
+    
+    #title and description
+    pdf.set_font("DejaVu", size=14)
+    pdf.cell(0, 10, f"Course: {month3_student['Course']}", ln=True)
+    pdf.cell(0, 10, f"Status: {month3_student['Status']}", ln=True)
+    pdf.cell(0, 10, f"Average Grade: {month3_student['AverageGrade']}", ln=True)
+    pdf.cell(0, 10, f"Missed Deadlines: {month3_student['Missed_deadlines']}", ln=True)
+    
+    #grade growth from 1st month
+    growth = round((month3_student["AverageGrade"] / month1_student["AverageGrade"] - 1) * 100, 1)
+    pdf.cell(0, 10, f"Grade Growth since 1st Month: {growth}%", ln=True)
+    
+    # Generate and add charts
+    line_buf = generate_line_chart_image(month3_student["Grade"])
+    donut_buf = generate_donut_chart_image(month3_student["Progress"])
+    
+    pdf.image(line_buf, x=5, w=100)
+    pdf.image(donut_buf, x=5, w=100)
+    
+    return pdf.output()
 

@@ -6,7 +6,7 @@
 #__Imports__ 
 import data_processor
 import streamlit as st
-# from streamlit_echarts import st_echarts
+import plotly.graph_objects as go
 
 st.set_page_config(page_title="Just SAT", layout="wide")
 
@@ -26,13 +26,13 @@ student_data = data_processor.average_grade(student_data)
 student_data = data_processor.process_grade_column(student_data)
 student_data = data_processor.progress(student_data)
 student_data = data_processor.status(student_data)
-
+no_filter_data=student_data #save the unfiltered data for donut chart
 #____Apply the course filter____
 if course_filter != "All":
     student_data = student_data[student_data["Course"] == course_filter]
 
 #____Title and description____
-st.title(":four_leaf_clover:Just SAT - prepare for SAT the *right* way!")
+st.title("🧸 Just SAT - prepare for SAT the *right* way!")
 st.caption("Leading online SAT school in Uzbekistan.")
 st.divider()
 
@@ -124,36 +124,13 @@ st.dataframe(student_data, column_config={
     },
     hide_index=True)
 
-# #____Pie chart for course popularity analysis____
-# options = {
-#     "tooltip": {"trigger": "item"},
-#     "legend": {"top": "5%", "left": "center"},
-#     "series": [
-#         {
-#             "name": "Access From",
-#             "type": "pie",
-#             "radius": ["40%", "70%"],
-#             "avoidLabelOverlap": False,
-#             "itemStyle": {
-#                 "borderRadius": 10,
-#                 "borderColor": "#fff",
-#                 "borderWidth": 2,
-#             },
-#             "label": {"show": False, "position": "center"},
-#             "emphasis": {
-#                 "label": {"show": True, "fontSize": 40, "fontWeight": "bold"}
-#             },
-#             "labelLine": {"show": False},
-#             "data": [
-#                 {"value": 1048, "name": "Search Engine"},
-#                 {"value": 735, "name": "Direct"},
-#                 {"value": 580, "name": "Email"},
-#                 {"value": 484, "name": "Union Ads"},
-#                 {"value": 300, "name": "Video Ads"},
-#             ],
-#         }
-#     ],
-# }
-# st_echarts(options=options, height="500px")
+#____Pie chart for course popularity analysis____
+st.title("Course popularity among students")
 
-    
+# Build the donut chart
+labels = ['English','Math','English and Math']
+values = [len(no_filter_data[no_filter_data["Course"] == "English"]), len(no_filter_data[no_filter_data["Course"] == "Math"]), len(no_filter_data[no_filter_data["Course"] == "English & Math"])]
+
+# Use hole to create a donut-like pie chart
+fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.3)])
+st.plotly_chart(fig, use_container_width=True)
